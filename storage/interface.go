@@ -1,5 +1,8 @@
 package storage
 
+import "github.com/cduffaut/MovieReservationSystem/utils"
+
 type StorageInterface interface {
-	StoreBook(movie Movie) error
+	StoreMovie(movie Movie) error
+	GetMovies() ([]utils.Movie, error)
 }

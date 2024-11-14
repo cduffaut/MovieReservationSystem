@@ -11,26 +11,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// var (
-// 	DATABASE_URL, DB_DRIVER, PORT string
-// )
-
-// func LaunchApp() {
-// 	godotenv.Load()
-// 	bind_address := os.Getenv("BIND_ADDRESS")
-
-// 	router.HandleFunc("POST /createmovie", request_handler.HandlePostRequest)
-// 	router.HandleFunc("GET /getmovie", request_handler.HandleGetRequest)
-
-// }
-
 type ServerConfig struct {
 	BindAddress string
 }
 
 func main() {
-	// Launching DB
-
 	godotenv.Load(".env")
 
 	pgConfig := postgresql.Config{

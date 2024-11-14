@@ -1,8 +1,4 @@
-CREATE DATABASE IF NOT EXISTS `MovieReservationSys`;
+# ToDoList:
 
-CREATE TABLE IF NOT EXISTS `MovieReservationSys`.`MovieSession` (
-    `MovieName` VARCHAR(255) NOT NULL,
-	`ClientName` VARCHAR(255) NOT NULL,
-	`ClientFirstName` VARCHAR(255) NOT NULL,
-	`ClientMail` VARCHAR(255) NOT NULL
-);
+	- 	Need to put more endpoint with differents roles,
+		So new parsing also...
