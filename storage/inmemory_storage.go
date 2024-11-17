@@ -5,7 +5,7 @@ import "fmt"
 type InMemoryStorage struct {
 }
 
-func (s *InMemoryStorage) StoreBook(movie Movie) error {
+func (s *InMemoryStorage) StoreMovie(movie Movie) error {
 	fmt.Println("tkt c'est stocké")
 	return nil
 }

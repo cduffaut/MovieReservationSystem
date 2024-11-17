@@ -29,9 +29,49 @@ func (c *Controller) CreateMovie(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	fmt.Print(movie)
-
 	if err := c.storage.StoreMovie(movie); err != nil {
+		panic(err)
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{
+		"status": "OK",
+	})
+}
+
+// add a new client to the DataBase List
+func (c *Controller) NewClient(w http.ResponseWriter, r *http.Request) {
+	var client storage.Client
+
+	if err := json.NewDecoder(r.Body).Decode(&client); err != nil {
+		panic(err)
+	}
+
+	if err := validator.New().Struct(client); err != nil {
+		panic(err)
+	}
+
+	if err := c.storage.StoreClient(client); err != nil {
+		panic(err)
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{
+		"status": "OK",
+	})
+}
+
+// add a new client to the DataBase List
+func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
+	var client storage.Client
+
+	if err := json.NewDecoder(r.Body).Decode(&client); err != nil {
+		panic(err)
+	}
+
+	if err := validator.New().Struct(client); err != nil {
+		panic(err)
+	}
+
+	if err := c.storage.StoreClient(client); err != nil {
 		panic(err)
 	}
 

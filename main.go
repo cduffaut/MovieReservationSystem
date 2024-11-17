@@ -33,7 +33,9 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("POST /create-movie", controller.CreateMovie)
-	router.HandleFunc("GET /movie", controller.GetMovie)
+	router.HandleFunc("POST /new-client", controller.NewClient)
+	router.HandleFunc("POST /new-reservation", controller.NewReservation)
+	router.HandleFunc("GET /movie-list", controller.GetMovie)
 
 	serverConfig := ServerConfig{
 		BindAddress: os.Getenv("BIND_ADDRESS"),
