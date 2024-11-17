@@ -36,6 +36,7 @@ func main() {
 	router.HandleFunc("POST /new-client", controller.NewClient)
 	router.HandleFunc("POST /new-reservation", controller.NewReservation)
 	router.HandleFunc("GET /movie-list", controller.GetMovie)
+	router.HandleFunc("DELETE /clean-outdated-movies", controller.DeleteOutdatedMovies)
 
 	serverConfig := ServerConfig{
 		BindAddress: os.Getenv("BIND_ADDRESS"),

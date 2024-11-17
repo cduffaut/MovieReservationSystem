@@ -61,23 +61,33 @@ func (c *Controller) NewClient(w http.ResponseWriter, r *http.Request) {
 
 // add a new client to the DataBase List
 func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
-	var client storage.Client
+	var reservation storage.Reservation
 
-	if err := json.NewDecoder(r.Body).Decode(&client); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&reservation); err != nil {
 		panic(err)
 	}
 
-	if err := validator.New().Struct(client); err != nil {
+	if err := validator.New().Struct(reservation); err != nil {
 		panic(err)
 	}
 
-	if err := c.storage.StoreClient(client); err != nil {
+	if err := c.storage.StoreReservation(reservation); err != nil {
 		panic(err)
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{
 		"status": "OK",
 	})
+}
+
+// Delete from the database all the outdated movies
+func (c *Controller) DeleteOutdatedMovies(w http.ResponseWriter, r *http.Request) {
+	if movie_list, err := c.storage.GetMovies(); err != nil {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(movie_list)
+	} else {
+		fmt.Println("Error encoding repsonse:", err)
+	}
 }
 
 // get back the movie struct data from the db & send a OK status if != err

@@ -1,6 +1,6 @@
 # ToDoList:
 
-- Parser la date nouveau film ajouté
-- Fonction qui update la liste des films encore actifs (par rapport à leur date)
-- Parser Nouvelle Reservation : date
-- Tester les fonctions
+- Tester les fonctions : avec la fonction interface pour comprendre la logique:
+	1. Avec des demandes POST, GET, DELETE au bon format, étape par étape
+	2. Avec des demandes au mauvais format, idem pour le process
+	3. Recherche de nouvelles méthodes à ajouter

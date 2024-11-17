@@ -37,7 +37,7 @@ type Reservation struct {
 
 func (s *Storage) StoreMovie(movie Movie) error {
 	ParseMovie(movie.DiffusionUntil)
-	query := `INSERT INTO movie_list (MovieName, ClientName, ClientFirstName, ClientMail) VALUES (?, ?)`
+	query := `INSERT INTO movie_list (MovieName, Category, DiffusionUntil) VALUES (?, ?)`
 
 	_, err := s.db.Exec(query, movie.MovieName, movie.Category, movie.DiffusionUntil)
 	if err != nil {
@@ -57,10 +57,70 @@ func (s *Storage) StoreClient(client Client) error {
 }
 
 func (s *Storage) StoreReservation(reservation Reservation) error {
-	query := `INSERT INTO reservation_list (FirstName, Name, Mail) VALUES (?, ?)`
+	if res, err := IsDateExpired(reservation.Date); err != nil || res {
+		panic("Error: Date for the movie reservation is not correct or up to date\nPlease refer to the waited format")
+	}
+	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES (?, ?)`
 
 	_, err := s.db.Exec(query, reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// putting the new up to date movie list in the database
+func (s *Storage) UpdateMovieList(up_to_date_movie_list []Movie) error {
+	for _, movie := range up_to_date_movie_list {
+		query := `INSERT INTO client_list (MovieName, Category, DiffusionUntil) VALUES (?, ?)`
+
+		_, err := s.db.Exec(query, movie.MovieName, movie.Category, movie.DiffusionUntil)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// deleting the past movie list
+func (s *Storage) DeleteMoviesList() error {
+	query := `DELETE * FROM movie_list`
+	_, err := s.db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Storage) CleanOutdatedMovies() error {
+	query := `SELECT * FROM movie_list`
+
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var up_to_date_movie_list []Movie
+
+	for rows.Next() {
+		var movie Movie
+		if err := rows.Scan(&movie.MovieName, &movie.Category, &movie.DiffusionUntil); err != nil {
+			return err
+		}
+		if res, err := IsDateExpired(movie.DiffusionUntil); err != nil || res {
+			up_to_date_movie_list = append(up_to_date_movie_list, movie)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return err
+	} else if len(up_to_date_movie_list) == 0 {
+		return nil
+	}
+	if err = s.DeleteMoviesList(); err != nil {
+		return err
+	}
+	if err = s.UpdateMovieList(up_to_date_movie_list); err != nil {
 		return err
 	}
 	return nil
