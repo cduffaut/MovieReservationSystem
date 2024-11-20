@@ -5,4 +5,5 @@ type StorageInterface interface {
 	GetMovies() ([]Movie, error)
 	StoreClient(client Client) error
 	StoreReservation(reservation Reservation) error
+	CleanOutdatedMovies() error
 }

@@ -82,20 +82,18 @@ func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
 
 // Delete from the database all the outdated movies
 func (c *Controller) DeleteOutdatedMovies(w http.ResponseWriter, r *http.Request) {
-	if movie_list, err := c.storage.GetMovies(); err != nil {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(movie_list)
-	} else {
-		fmt.Println("Error encoding repsonse:", err)
+	fmt.Println("A delete request was received!")
+	if err := c.storage.CleanOutdatedMovies(); err != nil {
+		fmt.Println("Error DELETE request:", err)
 	}
 }
 
 // get back the movie struct data from the db & send a OK status if != err
 func (c *Controller) GetMovie(w http.ResponseWriter, r *http.Request) {
 	if movie_list, err := c.storage.GetMovies(); err != nil {
+		fmt.Println("Error encoding repsonse:", err)
+	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(movie_list)
-	} else {
-		fmt.Println("Error encoding repsonse:", err)
 	}
 }
