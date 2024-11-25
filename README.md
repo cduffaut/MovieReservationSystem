@@ -7,14 +7,13 @@
 
 - A regler :
 
-	Reprendre cette partie: 	
+	Comprendre pourquoi cette ligne:
 	
-	if res := s.DoesTableExist("reservation_list"); !res {
-		fmt.Println("La DB Reservation n'existe pas..............")
-		return nil
-	}
+	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES (reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)`
 
-	Et faire une fonction qui crée la TABLE à la places
+	Produit cette erreur:
+
+	pq: missing FROM-clause entry for table "reservation"
 
 	Tester tous les types de requetes
 	Tester tous les types de requetes avec differents types d'erreurs

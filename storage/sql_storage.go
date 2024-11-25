@@ -71,13 +71,13 @@ func (s *Storage) StoreReservation(reservation Reservation) error {
 	if res, err := IsDateExpired(reservation.Date); err != nil || res {
 		panic("Error: Date for the movie reservation is not correct or up to date\nPlease refer to the waited format")
 	}
-	if res := s.DoesTableExist("reservation_list"); !res {
-		fmt.Println("La DB Reservation n'existe pas..............")
-		return nil
+	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS reservation_list(FirstName text, Name text, Mail text, Date text, Time text, MovieName text)")
+	if err != nil {
+		fmt.Println("Error during the creation of the TABLE \"reservation_list\"")
+		return err
 	}
 	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES (reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)`
-
-	_, err := s.db.Exec(query)
+	_, err = s.db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -143,9 +143,10 @@ func (s *Storage) CleanOutdatedMovies() error {
 }
 
 func (s *Storage) GetMovies() ([]Movie, error) {
-	if res := s.DoesTableExist("movie_list"); !res {
-		fmt.Println("La DB n'existe pas..............")
-		return nil, nil
+	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS movie_list(MovieName text, Category text, DiffusionUntil text)")
+	if err != nil {
+		fmt.Println("Error during the creation of the TABLE \"movie_list\"")
+		return nil, err
 	}
 	query := `SELECT * FROM movie_list`
 
