@@ -1,12 +1,13 @@
 package storage
 
 import (
+	"log"
 	"time"
 )
 
 // return false if err or if date is expired
 func IsDateExpired(new_date string) (bool, error) {
-	const layout = "2006-01-02" // y-m-d
+	const layout = "02-01-2006" // y-m-d
 
 	parse_new_date, err := time.Parse(layout, new_date)
 	if err != nil {
@@ -20,8 +21,8 @@ func IsDateExpired(new_date string) (bool, error) {
 
 func ParseMovie(date string) {
 	if res, err := IsDateExpired(date); err != nil {
-		panic(err)
+		log.Fatal(err)
 	} else if !res {
-		panic("Error: Date for the new movie is expired")
+		log.Fatal("Error: Date for the new movie is expired")
 	}
 }

@@ -32,6 +32,8 @@ func main() {
 
 	router := http.NewServeMux()
 
+	dbStorage.CreateTable()
+
 	router.HandleFunc("POST /create-movie", controller.CreateMovie)
 	router.HandleFunc("POST /new-client", controller.NewClient)
 	router.HandleFunc("POST /new-reservation", controller.NewReservation)

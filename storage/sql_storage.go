@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 func NewSQLStorage(db *sql.DB) *Storage {
@@ -27,11 +28,29 @@ type Client struct {
 	Mail      string `json:"Mail" validate:"required,email"`
 }
 
+func (s *Storage) CreateTable() error {
+	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS movie_list(MovieName text, Category text, DiffusionUntil text)")
+	if err != nil {
+		fmt.Println("Error during the creation of the TABLE \"movie_list\"")
+		return err
+	}
+	_, err = s.db.Exec("CREATE TABLE IF NOT EXISTS reservation_list(FirstName text, Name text, Mail text, Date text, Time text, MovieName text)")
+	if err != nil {
+		fmt.Println("Error during the creation of the TABLE \"reservation_list\"")
+		return err
+	}
+	_, err = s.db.Exec("CREATE TABLE IF NOT EXISTS client_list(FirstName text, Name text, Mail text)")
+	if err != nil {
+		fmt.Println("Error during the creation of the TABLE \"client_list\"")
+		return err
+	}
+	return nil
+}
+
 func (s *Storage) StoreMovie(movie Movie) error {
 	ParseMovie(movie.DiffusionUntil)
-	query := `INSERT INTO movie_list (MovieName, Category, DiffusionUntil) VALUES (movie.MovieName, movie.Category, movie.DiffusionUntil)`
-
-	_, err := s.db.Exec(query)
+	query := `INSERT INTO movie_list (MovieName, Category, DiffusionUntil) VALUES ($1, $2, $3)`
+	_, err := s.db.Exec(query, movie.MovieName, movie.Category, movie.DiffusionUntil)
 	if err != nil {
 		return err
 	}
@@ -39,9 +58,8 @@ func (s *Storage) StoreMovie(movie Movie) error {
 }
 
 func (s *Storage) StoreClient(client Client) error {
-	query := `INSERT INTO client_list (FirstName, Name, Mail) VALUES (client.FirstName, client.Name, client.Mail)`
-
-	_, err := s.db.Exec(query)
+	query := `INSERT INTO client_list (FirstName, Name, Mail) VALUES ($1, $2, $3)`
+	_, err := s.db.Exec(query, client.FirstName, client.Name, client.Mail)
 	if err != nil {
 		return err
 	}
@@ -69,15 +87,11 @@ func (s *Storage) DoesTableExist(table_name string) bool {
 
 func (s *Storage) StoreReservation(reservation Reservation) error {
 	if res, err := IsDateExpired(reservation.Date); err != nil || res {
-		panic("Error: Date for the movie reservation is not correct or up to date\nPlease refer to the waited format")
+		log.Fatal("Error: Date for the movie reservation is not correct or up to date\nPlease refer to the waited format")
 	}
-	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS reservation_list(FirstName text, Name text, Mail text, Date text, Time text, MovieName text)")
-	if err != nil {
-		fmt.Println("Error during the creation of the TABLE \"reservation_list\"")
-		return err
-	}
-	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES (reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)`
-	_, err = s.db.Exec(query)
+	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES ($1, $2, $3, $4, $5, $6)`
+	_, err := s.db.Exec(query, reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)
+
 	if err != nil {
 		return err
 	}
@@ -87,13 +101,11 @@ func (s *Storage) StoreReservation(reservation Reservation) error {
 // putting the new up to date movie list in the database
 func (s *Storage) UpdateMovieList(up_to_date_movie_list []Movie) error {
 	for _, movie := range up_to_date_movie_list {
-		query := `INSERT INTO client_list (MovieName, Category, DiffusionUntil) VALUES (movie.MovieName, movie.Category, movie.DiffusionUntil)`
-
-		_, err := s.db.Exec(query)
+		query := `INSERT INTO movie_list (MovieName, Category, DiffusionUntil) VALUES ($1, $2, $3))`
+		_, err := s.db.Exec(query, movie.MovieName, movie.Category, movie.DiffusionUntil)
 		if err != nil {
 			return err
 		}
-		movie.MovieName = "Just To Avoid Unused Variable Error..."
 	}
 	return nil
 }
@@ -143,11 +155,6 @@ func (s *Storage) CleanOutdatedMovies() error {
 }
 
 func (s *Storage) GetMovies() ([]Movie, error) {
-	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS movie_list(MovieName text, Category text, DiffusionUntil text)")
-	if err != nil {
-		fmt.Println("Error during the creation of the TABLE \"movie_list\"")
-		return nil, err
-	}
 	query := `SELECT * FROM movie_list`
 
 	rows, err := s.db.Query(query)
@@ -166,7 +173,7 @@ func (s *Storage) GetMovies() ([]Movie, error) {
 		movie_list = append(movie_list, movie)
 	}
 	if err = rows.Err(); err != nil {
-		return movie_list, nil
+		return movie_list, err
 	}
-	return nil, err
+	return movie_list, nil
 }

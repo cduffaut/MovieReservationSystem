@@ -1,19 +1,8 @@
 # ToDoList:
 
-- Tester les fonctions : avec la fonction interface pour comprendre la logique:
-	1. Avec des demandes POST, GET, DELETE au bon format, étape par étape
-	2. Avec des demandes au mauvais format, idem pour le process
-	3. Recherche de nouvelles méthodes à ajouter
+	Dans Create Movie:
+		créer un tableau d'heures à la place d'une seule heure quand on ajoute des films
+		>>> parser ces heures
 
-- A regler :
-
-	Comprendre pourquoi cette ligne:
-	
-	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES (reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)`
-
-	Produit cette erreur:
-
-	pq: missing FROM-clause entry for table "reservation"
-
-	Tester tous les types de requetes
-	Tester tous les types de requetes avec differents types d'erreurs
+	Dans New Reservation:
+		créer une fonction qui va venir regarder pour les films si une heure appartient aux horaire de diffusion de film >>> lorsqu'une réservation est faite

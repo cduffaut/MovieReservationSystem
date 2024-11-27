@@ -3,6 +3,7 @@ package request_handler
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/cduffaut/MovieReservationSystem/storage"
@@ -22,15 +23,15 @@ type Controller struct {
 func (c *Controller) CreateMovie(w http.ResponseWriter, r *http.Request) {
 	var movie storage.Movie
 	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := validator.New().Struct(movie); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := c.storage.StoreMovie(movie); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{
@@ -43,15 +44,15 @@ func (c *Controller) NewClient(w http.ResponseWriter, r *http.Request) {
 	var client storage.Client
 
 	if err := json.NewDecoder(r.Body).Decode(&client); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := validator.New().Struct(client); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := c.storage.StoreClient(client); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{
@@ -64,15 +65,15 @@ func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
 	var reservation storage.Reservation
 
 	if err := json.NewDecoder(r.Body).Decode(&reservation); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := validator.New().Struct(reservation); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := c.storage.StoreReservation(reservation); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{
