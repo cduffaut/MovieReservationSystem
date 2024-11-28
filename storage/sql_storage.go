@@ -16,10 +16,16 @@ type Storage struct {
 	db *sql.DB
 }
 
+type Showtime struct {
+	Date string `json:"Date" validate:"required,min=10,max=10"` // Date format: yyyy-mm-dd
+	Time string `json:"Time" validate:"required,min=5,max=5"`   // Time format: HH:mm
+}
+
 type Movie struct {
-	MovieName      string `json:"MovieName" validate:"required,min=1,max=20"`
-	Category       string `json:"Category" validate:"required,min=3,max=20"`
-	DiffusionUntil string `json:"DiffusionUntil" validate:"required,min=10,max=10"` // Usage: datetime=2006-01-02 (y-m-d)
+	MovieName      string     `json:"MovieName" validate:"required,min=1,max=20"`
+	Category       string     `json:"Category" validate:"required,min=3,max=20"`
+	DiffusionUntil string     `json:"DiffusionUntil" validate:"required,min=10,max=10"` // Usage: datetime=2006-01-02 (y-m-d)
+	Showtimes      []Showtime `json:"Showtimes" validate:"required,dive,required"`
 }
 
 type Client struct {

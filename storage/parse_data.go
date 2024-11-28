@@ -7,7 +7,7 @@ import (
 
 // return false if err or if date is expired
 func IsDateExpired(new_date string) (bool, error) {
-	const layout = "02-01-2006" // y-m-d
+	const layout = "02-01-2006" // d-m-y
 
 	parse_new_date, err := time.Parse(layout, new_date)
 	if err != nil {

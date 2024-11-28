@@ -13,10 +13,16 @@ func POSTCreateMovie() {
 
 	// JSON body
 	body := []byte(`{
-	"MovieName": "Les petits oiseaux",
-	"Category" : "Documentaire Animalier",
-	"DiffusionUntil": "11-02-2025"
-	}`)
+		"MovieName": "Inception",
+		"Category": "Science Fiction",
+		"DiffusionUntil": "31-12-2024",
+		"Showtimes": [
+		  {"Date": "28-11-2024", "Time": "14:00"},
+		  {"Date": "28-11-2024", "Time": "17:30"},
+		  {"Date": "28-11-2024", "Time": "20:00"}
+		]
+	  }`)
+
 	// Create a HTTP post request
 	r, err := http.NewRequest("POST", post_url, bytes.NewBuffer(body))
 	if err != nil {
@@ -79,7 +85,7 @@ func SendResquestGET() {
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error during the reqding of the response:", err)
+		fmt.Println("Error during the reading of the response:", err)
 		return
 	}
 
@@ -109,7 +115,7 @@ func GET_() {
 		return
 	}
 
-	// Afficher la réponse brute
+	// Display brut response
 	fmt.Println("Brut response from GET:", string(body))
 	fmt.Println("[+] Test: GET Request Was Sended!")
 }
