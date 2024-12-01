@@ -13,13 +13,13 @@ func POSTCreateMovie() {
 
 	// JSON body
 	body := []byte(`{
-		"MovieName": "Inception",
-		"Category": "Science Fiction",
-		"DiffusionUntil": "31-12-2024",
+		"MovieName": "Jsp",
+		"Category": "art abstrait",
+		"DiffusionUntil": "30-06-2025",
 		"Showtimes": [
-		  {"Date": "28-11-2024", "Time": "14:00"},
-		  {"Date": "28-11-2024", "Time": "17:30"},
-		  {"Date": "28-11-2024", "Time": "20:00"}
+		  {"Date": "28-01-2025", "Time": "14:00"},
+		  {"Date": "28-12-2024", "Time": "17:30"},
+		  {"Date": "28-12-2024", "Time": "03:00"}
 		]
 	  }`)
 
@@ -95,7 +95,7 @@ func SendResquestGET() {
 }
 
 // GET /movie-list
-func GET_() {
+func GET() {
 	get_url := "http://localhost:8080/movie-list"
 	// Create a HTTP GET request
 	resp, err := http.Get(get_url)
@@ -111,7 +111,7 @@ func GET_() {
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error during the reqding of the response:", err)
+		fmt.Println("Error during the reading of the response:", err)
 		return
 	}
 

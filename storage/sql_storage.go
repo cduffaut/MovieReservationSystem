@@ -3,7 +3,6 @@ package storage
 import (
 	"database/sql"
 	"fmt"
-	"log"
 )
 
 func NewSQLStorage(db *sql.DB) *Storage {
@@ -22,7 +21,7 @@ type Showtime struct {
 }
 
 type Movie struct {
-	MovieName      string     `json:"MovieName" validate:"required,min=1,max=20"`
+	MovieName      string     `json:"MovieName" validate:"required,min=1,max=30"`
 	Category       string     `json:"Category" validate:"required,min=3,max=20"`
 	DiffusionUntil string     `json:"DiffusionUntil" validate:"required,min=10,max=10"` // Usage: datetime=2006-01-02 (y-m-d)
 	Showtimes      []Showtime `json:"Showtimes" validate:"required,dive,required"`
@@ -35,9 +34,22 @@ type Client struct {
 }
 
 func (s *Storage) CreateTable() error {
-	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS movie_list(MovieName text, Category text, DiffusionUntil text)")
+	_, err := s.db.Exec("CREATE TABLE IF NOT EXISTS movie_list (MovieName TEXT PRIMARY KEY, Category TEXT NOT NULL,DiffusionUntil TEXT NOT NULL);")
 	if err != nil {
 		fmt.Println("Error during the creation of the TABLE \"movie_list\"")
+		return err
+	}
+	_, err = s.db.Exec(`
+    CREATE TABLE IF NOT EXISTS showtimes (
+        ShowtimeID INTEGER PRIMARY KEY,
+        MovieName TEXT NOT NULL,
+        Date TEXT NOT NULL,  -- Format: yyyy-mm-dd
+        Time TEXT NOT NULL,  -- Format: HH:mm
+        FOREIGN KEY (MovieName) REFERENCES movie_list(MovieName) ON DELETE CASCADE
+    );
+`)
+	if err != nil {
+		fmt.Println("Error during the creation of the TABLE \"showtimes\"")
 		return err
 	}
 	_, err = s.db.Exec("CREATE TABLE IF NOT EXISTS reservation_list(FirstName text, Name text, Mail text, Date text, Time text, MovieName text)")
@@ -54,11 +66,24 @@ func (s *Storage) CreateTable() error {
 }
 
 func (s *Storage) StoreMovie(movie Movie) error {
-	ParseMovie(movie.DiffusionUntil)
+	movie_until_date := ParseMovieDate(movie.DiffusionUntil)
 	query := `INSERT INTO movie_list (MovieName, Category, DiffusionUntil) VALUES ($1, $2, $3)`
 	_, err := s.db.Exec(query, movie.MovieName, movie.Category, movie.DiffusionUntil)
 	if err != nil {
 		return err
+	}
+	for _, showtime := range movie.Showtimes {
+		show_date := ParseMovieDate(showtime.Date)
+		if !ShowAfterDiffusionUntil(show_date, movie_until_date) {
+			continue
+		} else if !ParseTimeShow(showtime) {
+			continue
+		}
+		query = `INSERT INTO showtimes (MovieName, Date, Time) VALUES ($1, $2, $3)`
+		_, err := s.db.Exec(query, movie.MovieName, showtime.Date, showtime.Time)
+		if err != nil {
+			return fmt.Errorf("failed to insert showtime: %w", err)
+		}
 	}
 	return nil
 }
@@ -92,9 +117,7 @@ func (s *Storage) DoesTableExist(table_name string) bool {
 }
 
 func (s *Storage) StoreReservation(reservation Reservation) error {
-	if res, err := IsDateExpired(reservation.Date); err != nil || res {
-		log.Fatal("Error: Date for the movie reservation is not correct or up to date\nPlease refer to the waited format")
-	}
+	ParseMovieDate(reservation.Date)
 	query := `INSERT INTO reservation_list (FirstName, Name, Mail, Date, Time, MovieName) VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := s.db.Exec(query, reservation.FirstName, reservation.Name, reservation.Mail, reservation.Date, reservation.Time, reservation.MovieName)
 
@@ -118,7 +141,7 @@ func (s *Storage) UpdateMovieList(up_to_date_movie_list []Movie) error {
 
 // deleting the past movie list
 func (s *Storage) DeleteMoviesList() error {
-	query := `DELETE * FROM movie_list`
+	query := `DELETE FROM movie_list`
 	_, err := s.db.Exec(query)
 	if err != nil {
 		return err
@@ -142,7 +165,7 @@ func (s *Storage) CleanOutdatedMovies() error {
 		if err := rows.Scan(&movie.MovieName, &movie.Category, &movie.DiffusionUntil); err != nil {
 			return err
 		}
-		if res, err := IsDateExpired(movie.DiffusionUntil); err != nil || res {
+		if res, _, err := IsDateExpired(movie.DiffusionUntil); err != nil || res {
 			up_to_date_movie_list = append(up_to_date_movie_list, movie)
 		}
 	}

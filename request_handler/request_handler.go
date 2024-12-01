@@ -83,7 +83,6 @@ func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
 
 // Delete from the database all the outdated movies
 func (c *Controller) DeleteOutdatedMovies(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("A delete request was received!")
 	if err := c.storage.CleanOutdatedMovies(); err != nil {
 		fmt.Println("Error DELETE request:", err)
 	}
