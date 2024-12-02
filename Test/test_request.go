@@ -11,26 +11,19 @@ import (
 func POSTCreateMovie() {
 	post_url := "http://localhost:8080/create-movie"
 
-	// JSON body
 	body := []byte(`{
-		"MovieName": "Jsp",
-		"Category": "art abstrait",
-		"DiffusionUntil": "30-06-2025",
-		"Showtimes": [
-		  {"Date": "28-01-2025", "Time": "14:00"},
-		  {"Date": "28-12-2024", "Time": "17:30"},
-		  {"Date": "28-12-2024", "Time": "03:00"}
-		]
+		"MovieName": "test",
+		"Category": "art test",
+		"DiffusionUntil": "30-06-2025"
 	  }`)
 
-	// Create a HTTP post request
 	r, err := http.NewRequest("POST", post_url, bytes.NewBuffer(body))
 	if err != nil {
 		panic(err)
 	}
-	r.Header.Add("Content-Type", "application/json") // inform that the content type of the request is JSON
+	r.Header.Add("Content-Type", "application/json")
 	client := &http.Client{}
-	res, err := client.Do(r) // send the client POST request
+	res, err := client.Do(r)
 	if err != nil {
 		panic(err)
 	}
@@ -140,8 +133,8 @@ func SendResquestDELETE() {
 }
 
 func main() {
-	// SendResquestDELETE()
 	// SendResquestGET()
 	// SendResquestPOST()
 	POSTCreateMovie()
+	SendResquestDELETE()
 }

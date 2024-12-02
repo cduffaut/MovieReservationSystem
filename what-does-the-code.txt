@@ -1,0 +1,17 @@
+1) Create the following DataBase Tables (if not already created):
+- movie_list
+- reservation_list
+- client_list
+
+2) Request for the backend reservation system look like that:
+- Client POST: FirstName, Name, Mail
+- Reservation POST: FirstName, Name, Mail, Date, Time, MovieName
+- Movie POST: MovieName, Category, Maximum Diffusion Date
+
+3) Handle those differents requests:
+- POST /create-movie: Add to the database a new movie diffused by the cinema in a table
+- POST /new-client: Add to the database all the data of a client in a table
+- POST /new-reservation: Add to the database new reservation client data into a table
+- GET /movie-list: return a tab/slice of struct movie{movie-name, max-diffusion-date, category}
+- DELETE /clean-outdated-movies: From table that stock movies data > "Delete" all the movies 
+that are not "available" (outdated) anymore

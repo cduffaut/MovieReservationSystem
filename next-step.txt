@@ -1,0 +1,31 @@
+0) Before going further,
+We can meliorate by addind some new features in the already existant TABLE/request handler
+
+1) Do not add anything if there is an error in the request on at least one element
+Just return an error code, display an error msg, and let the program run
+
+2) New Movie Added:
+New features to add (and not forget parsing):
+	- Date and hours of diffusion
+Need to change:
+	- StoreMovie, DeleteMovie
+Parse:
+	- The date of each session should not be expired
+	- No movies should be diffused before 8h30
+	- No other movies should be diffused at the same Time
+3) New Reservation Made:
+New features to add (and not forget parsing):
+	- The Date of the session, and the hour
+Parse:
+	- The date and the session should match with a value in the database
+
+4) Some new (and more complex?) features:
+	- adding the duration of the movies in the StoreMovie request
+	- by 00H00 no movies should be diffused > StoreMovie should check if 
+	hour of diffusion + movie duration should not exced 00h00
+	- You should not be able to run 2 movies in the same moment: 
+	If a movie is still in diffusion > Another can't be launched 
+	(StoreMovie will not add the movie date-hour pair to the database or return an error msg
+	and not treat the entire demand)
+
+5) Cancel Reservation:

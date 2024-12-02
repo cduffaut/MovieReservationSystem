@@ -43,24 +43,24 @@ func ShowAfterDiffusionUntil(show, until time.Time) bool {
 }
 
 // The cinema does not start to play movies from 00h to 8h30, return false if the time does not fit
-func ParseTimeShow(showtime Showtime) bool {
-	show_time, err := time.Parse("15:04", showtime.Time)
-	if err != nil {
-		fmt.Println("Invalid time format for showtime:", err, "\nSession cannot be before 08:30 or after 23:00")
-		return false
-	}
-	// check if showtime is not too soon
-	start_time, err := time.Parse("15:04", "08:30")
-	if err != nil {
-		log.Fatal(err)
-	}
-	end_time, err := time.Parse("15:04", "08:30")
-	if err != nil {
-		log.Fatal(err)
-	}
-	if !show_time.After(end_time) && !show_time.Before(start_time) {
-		fmt.Println("show time", showtime, "is not in the right range: 8:30 to 23:00")
-		return false
-	}
-	return true
-}
+// func ParseTimeShow(showtime Showtime) bool {
+// 	show_time, err := time.Parse("15:04", showtime.Time)
+// 	if err != nil {
+// 		fmt.Println("Invalid time format for showtime:", err, "\nSession cannot be before 08:30 or after 23:00")
+// 		return false
+// 	}
+// 	// check if showtime is not too soon
+// 	start_time, err := time.Parse("15:04", "08:30")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	end_time, err := time.Parse("15:04", "08:30")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	if !show_time.After(end_time) && !show_time.Before(start_time) {
+// 		fmt.Println("show time", showtime, "is not in the right range: 8:30 to 23:00")
+// 		return false
+// 	}
+// 	return true
+// }
