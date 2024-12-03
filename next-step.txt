@@ -1,5 +1,5 @@
 0) Before going further,
-We can meliorate by addind some new features in the already existant TABLE/request handler
+We can meliorate by adding some new features in the already existant TABLE/request handler
 
 1) Do not add anything if there is an error in the request on at least one element
 Just return an error code, display an error msg, and let the program run

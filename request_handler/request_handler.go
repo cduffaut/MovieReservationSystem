@@ -31,12 +31,14 @@ func (c *Controller) CreateMovie(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.storage.StoreMovie(movie); err != nil {
-		log.Fatal(err)
+		fmt.Println("Error POST (New Movie) request:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "An error occured with POST (New Movie) request",
+		})
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
-
-	json.NewEncoder(w).Encode(map[string]string{
-		"status": "OK",
-	})
 }
 
 // add a new client to the DataBase List
@@ -52,15 +54,17 @@ func (c *Controller) NewClient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.storage.StoreClient(client); err != nil {
-		log.Fatal(err)
+		fmt.Println("Error POST (New client) request:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "An error occured with POST (New client) request",
+		})
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
-
-	json.NewEncoder(w).Encode(map[string]string{
-		"status": "OK",
-	})
 }
 
-// add a new client to the DataBase List
+// Add a new client to the DataBase List
 func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
 	var reservation storage.Reservation
 
@@ -73,18 +77,26 @@ func (c *Controller) NewReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.storage.StoreReservation(reservation); err != nil {
-		log.Fatal(err)
+		fmt.Println("Error POST (New Reservation) request:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "An error occured with POST (New Reservation) request",
+		})
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
-
-	json.NewEncoder(w).Encode(map[string]string{
-		"status": "OK",
-	})
 }
 
 // Delete from the database all the outdated movies
 func (c *Controller) DeleteOutdatedMovies(w http.ResponseWriter, r *http.Request) {
 	if err := c.storage.CleanOutdatedMovies(); err != nil {
 		fmt.Println("Error DELETE request:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "An error occured with DELETE request",
+		})
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
